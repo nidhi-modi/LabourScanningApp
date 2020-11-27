@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Scanner</string>
+
+    <string name="read">Stop</string>
+
+    <string name="scanning_text1">Tag in to your row</string>
+
+    <string name="scanning_text2">Place your phone over the tag to start the job.</string>
+
+
+</resources>
