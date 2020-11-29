@@ -3,7 +3,6 @@ package com.tandg.labourscanningapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -15,21 +14,17 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tandg.labourscanningapp.webservice.SpreadsheetWebService;
-
-import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     String tagID, tagIDMain;
+    private PowerManager.WakeLock mWakeLock = null;
 
     TextView txtTagName, txtTimer;
     private TimerStatus timerStatus = TimerStatus.STOPPED;
@@ -197,7 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         fn_countdown();
 
+
+
+
     }
+
+
 
     private void fn_countdown() {
 
@@ -241,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onFinish() {
                     setProgress(progress, endTime);
 
-
                 }
             };
             countDownTimer.start();
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startTimer() {
 
-        StartTime = SystemClock.uptimeMillis();
+        StartTime = SystemClock.elapsedRealtime();
         handler.postDelayed(runnable, 0);
 
 
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         public void run() {
 
-            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+            MillisecondTime = SystemClock.elapsedRealtime() - StartTime;
 
             UpdateTime = TimeBuff + MillisecondTime;
 
@@ -372,6 +372,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             call.cancel();
         }
     };
+
+
 
     @Override
     public void onClick(View v) {
