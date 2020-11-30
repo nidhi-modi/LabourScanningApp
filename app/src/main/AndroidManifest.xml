@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReadNfc">
+        <activity android:name=".ReadNfc"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

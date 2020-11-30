@@ -1,31 +1,20 @@
 package com.tandg.labourscanningapp
 
-import android.app.Activity
+
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.MifareClassic
 import android.nfc.tech.MifareUltralight
 import android.os.Bundle
-import android.provider.Settings.ACTION_NFC_SETTINGS
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
-
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.os.Parcelable
-import android.util.Log;
-import android.view.Menu
-import android.view.MenuItem
+import android.provider.Settings.ACTION_NFC_SETTINGS
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-
-
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class ReadNfc : AppCompatActivity() {
@@ -49,9 +38,11 @@ class ReadNfc : AppCompatActivity() {
             return
         }
 
-        pendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, this.javaClass)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                    Intent(this, this.javaClass)
+                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+
+
     }
 
     override fun onResume() {
@@ -68,6 +59,7 @@ class ReadNfc : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
+        //this method scans the tags
         resolveIntent(intent)
     }
 
@@ -154,23 +146,39 @@ class ReadNfc : AppCompatActivity() {
         if (NfcAdapter.ACTION_TAG_DISCOVERED == action
                 || NfcAdapter.ACTION_TECH_DISCOVERED == action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
+
+            Toast.makeText(applicationContext,"Scanned",Toast.LENGTH_SHORT).show();
             val rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
 
-            if (rawMsgs != null) {
-                Log.i("NFC", "Size:" + rawMsgs.size);
-                val ndefMessages: Array<NdefMessage> = Array(rawMsgs.size, {i -> rawMsgs[i] as NdefMessage});
-                displayNfcMessages(ndefMessages)
-            } else {
-                val empty = ByteArray(0)
-                val id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)
-                val tag = intent.getParcelableExtra<Parcelable>(NfcAdapter.EXTRA_TAG) as Tag
-                val payload = dumpTagData(tag).toByteArray()
-                val record = NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload)
-                val emptyMsg = NdefMessage(arrayOf(record))
-                val emptyNdefMessages: Array<NdefMessage> = arrayOf(emptyMsg);
-                displayNfcMessages(emptyNdefMessages)
-            }
+
+                            if (rawMsgs != null) {
+                                Log.i("NFC", "Size:" + rawMsgs.size);
+                                val ndefMessages: Array<NdefMessage> = Array(rawMsgs.size, { i -> rawMsgs[i] as NdefMessage });
+                                displayNfcMessages(ndefMessages)
+                            } else {
+                                val empty = ByteArray(0)
+                                val id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)
+                                val tag = intent.getParcelableExtra<Parcelable>(NfcAdapter.EXTRA_TAG) as Tag
+                                val payload = dumpTagData(tag).toByteArray()
+                                val record = NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload)
+                                val emptyMsg = NdefMessage(arrayOf(record))
+                                val emptyNdefMessages: Array<NdefMessage> = arrayOf(emptyMsg);
+                                displayNfcMessages(emptyNdefMessages)
+                            }
+                            // TODO: do something
+
+
+
         }
+
+
+    }
+
+    override fun onBackPressed() {
+        val a = Intent(Intent.ACTION_MAIN)
+        a.addCategory(Intent.CATEGORY_HOME)
+        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(a)
     }
 
 
